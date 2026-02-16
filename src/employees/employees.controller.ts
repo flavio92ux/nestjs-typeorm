@@ -1,34 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { EmployeesService } from './employees.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { QueryBus } from '@nestjs/cqrs';
+import { GetEmployeeQuery } from './queries/get-employee/get-employee.query';
+import { plainToClass } from 'class-transformer';
 
 @Controller('employees')
 export class EmployeesController {
-  constructor(private readonly employeesService: EmployeesService) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   @Post()
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return this.employeesService.create(createEmployeeDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.employeesService.findAll();
+    return null;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employeesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const query = plainToClass( GetEmployeeQuery, { id: Number(id) })
+    const employee =  await this.queryBus.execute(query)
+
+    if (!employee) throw new NotFoundException();
+
+    return employee;
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
-    return this.employeesService.update(+id, updateEmployeeDto);
+    return null;
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.employeesService.remove(+id);
-  }
 }

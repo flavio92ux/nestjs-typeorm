@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Employee } from './entities/employee.entity';
-import { ContactInfo } from './entities/contact-info.entity';
 import { Task } from './entities/task.entity';
 import { Meeting } from './entities/meeting.entity';
+import { Employee } from './employees/entities/employee.entity';
+import { ContactInfo } from './employees/entities/contact-info.entity';
 
 @Injectable()
 export class AppService {
